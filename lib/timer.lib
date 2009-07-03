@@ -1,0 +1,68 @@
+# timer.lib
+# Note no #!/bin/sh as this should not spawn 
+# an extra shell. It's not the end of the world 
+# to have one, but clearer not to.
+# subroutine to time out HughesNet Free Time
+
+debug=0
+bewichinghour=4
+#**Data downloaded between 3:00 AM and 6:00 AM Eastern Time, prior to
+#11/10/08 and between 2:00 AM and 7:00 AM Eastern Time after 11/10/08
+#will not apply towards your service plan's download threshold. Please
+#see the FAQs for additional information. 
+
+ ingoldenhours()
+{
+   r=0
+   case $1 in
+    00 )
+       r=1
+     ;;
+    01 )
+      r=1
+      ;;
+    02 )
+      r=1
+      ;;
+    03 )
+     r=1
+      ;;
+    23)
+     r=1
+     ;;
+    * )
+     r=0
+     ;;
+     esac
+  echo $r
+}
+
+if [ $debug =  1 ]; then
+ checktime ()
+ {
+    # do nothing if debug
+    echo `date` "empty"
+    return
+ }
+waittime=30
+ hr=`date +%H`
+ m=`date +%M`
+ starttime=`expr $hr \*  60 + $m `
+else
+  checktime () {
+   #if it's the bewichinghour or greater, stop
+      hr=`date +%H`
+      if [ `ingoldenhours $hr` == "0" ] 
+      then
+        echo `date` "Free Time used up Exit(0)" 
+        #get ready for tomorow night...
+        cp /home/george/Desktop/mp3/urls.urls /home/george/Desktop/mp3/urls.urls.bak
+        cp /home/george/Desktop/mp3/notdownloaded.urls /home/george/Desktop/mp3/urls.urls
+
+       exit 0
+          break
+       fi
+  }
+fi
+
+
